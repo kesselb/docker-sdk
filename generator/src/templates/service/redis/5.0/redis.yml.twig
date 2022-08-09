@@ -1,6 +1,5 @@
   {{ serviceName }}:
     image: redis:5.0-alpine
-    {{ project._platformCompose }}
     command: 'redis-server /usr/local/etc/redis/redis.conf --appendonly yes --save \"\"'
     networks:
       - private
