@@ -80,11 +80,11 @@ $namespace = $projectData['namespace'];
 $services = $projectData['services'];
 
 foreach ($sharedServices as $serviceName => $projectNamespace) {
-    if ($projectNamespace == $namespace) {
+    if (!array_key_exists($serviceName, $services)) {
         continue;
     }
 
-    unset($services[$serviceName]);
+    $services[$serviceName]['shared'] = $projectNamespace !== $namespace;
 }
 
 $projectData['services'] = $services;
