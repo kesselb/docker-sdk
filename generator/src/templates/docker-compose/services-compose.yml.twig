@@ -4,6 +4,7 @@ services:
 {% for serviceName, serviceData in services %}
 {% set engine = serviceData['engine'] | lower %}
 {% set version = serviceData['version'] | default('default') %}
+{% set isSharedService = serviceData['shared'] | default(false) %}
 {% include "service/" ~ engine ~ "/" ~ version ~ "/" ~  engine ~ ".yml.twig" with { project: _context, serviceName: serviceName, serviceData: serviceData, engine: engine, version: version } only %}
 {% endfor %}
 
