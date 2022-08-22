@@ -1,5 +1,6 @@
   {{ serviceName }}:
     image: postgres:12-alpine
+    container_name: spryker_{{ serviceName }}
     networks:
       - private
     labels:

@@ -1,5 +1,6 @@
   {{ serviceName }}:
     image: spryker/kibana:5.6.16-eol
+    container_name: spryker_{{ serviceName }}
     networks:
         - private
     labels:

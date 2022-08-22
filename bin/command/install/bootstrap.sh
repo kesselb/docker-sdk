@@ -4,6 +4,7 @@ require docker
 
 import environment/docker.sh
 import environment/docker-compose.sh
+import environment/cache.sh
 
 Registry::addCommand "boot" "Command::bootstrap"
 Registry::addCommand "bootstrap" "Command::bootstrap"
@@ -70,6 +71,8 @@ function Command::bootstrap() {
 
     tmpDeploymentDir="$(cd "${tmpDeploymentDir}" >/dev/null 2>&1 && pwd)"
 
+    Cache::load "$tmpDeploymentDir"
+
     Command::bootstrap::_validateParameters
 
     Console::info "Using ${projectYaml}"
@@ -110,6 +113,7 @@ function Command::bootstrap() {
     docker run -i --rm "${userToRun[@]}" \
         -e SPRYKER_DOCKER_SDK_PLATFORM="${_PLATFORM}" \
         -e SPRYKER_DOCKER_SDK_DEPLOYMENT_DIR="${DESTINATION_DIR}" \
+        -e SPRYKER_PROJECT_PATH="${SPRYKER_PROJECT_PATH}" \
         -e VERBOSE="${VERBOSE}" \
         -v "${tmpDeploymentDir}":/data/deployment:rw \
         spryker_docker_sdk
@@ -138,7 +142,7 @@ function Command::bootstrap::_deploy() {
         return "${TRUE}"
     fi
 
-    [ -d "${DESTINATION_DIR}" ] && rm -rf "${DESTINATION_DIR:?}/*"
+    [ -d "${DESTINATION_DIR}" ] && rm -rf "${DESTINATION_DIR}"
     [ ! -d "${DESTINATION_DIR}" ] && mkdir "${DESTINATION_DIR}"
     cp -R "${tmpDeploymentDir}/." "${DESTINATION_DIR}"
     rm -rf "${tmpDeploymentDir}"

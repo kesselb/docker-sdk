@@ -19,12 +19,14 @@ FRAMEWORK_CWD=$(pwd)
 . ./registry/help.sh
 . ./registry/installer.sh
 . ./registry/flow.sh
+. ./environment/cache.sh
 
 popd >/dev/null
 
 SYSTEM_IMPORT_LIST=""
 
 function System::Bootstrap() {
+    Cache::setup
     Registry::checkRequirements "${@}"
 }
 

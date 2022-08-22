@@ -3,7 +3,9 @@
 set -e
 
 export SELF_SCRIPT=$0
+
 SOURCE_DIR="${BASH_SOURCE%/*}"
+SPRYKER_PROJECT_PATH="$(dirname $(realpath ${BASH_SOURCE%/*}))"
 
 pushd "${BASH_SOURCE%/*}" >/dev/null
 . ./bin/framework.sh
@@ -58,6 +60,8 @@ command=$1
 shift || true
 
 case "${command}" in
+    env-list)
+      ;;
     config)
         bash "${FRAMEWORK_CWD}/standalone/logo/spryker-sdk.sh" >&2
         Command::config "${@}"

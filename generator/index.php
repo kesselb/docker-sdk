@@ -1,5 +1,7 @@
 <?php
 
+use Cache\Builder\CacheBuilder;
+use Cache\Reader\CacheReader;
 use DeployFileGenerator\DeployFileGeneratorFactory;
 use DeployFileGenerator\Transfer\DeployFileTransfer;
 use Spatie\Url\Url;
@@ -13,6 +15,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('APPLICATION_SOURCE_DIR', __DIR__ . DS . 'src');
 include_once __DIR__ . DS . 'vendor' . DS . 'autoload.php';
 
+//(new CacheReader)->getCache();
 $deploymentDir = '/data/deployment';
 $projectYaml = buildProjectYaml($deploymentDir . '/project.yml');
 
@@ -73,6 +76,7 @@ $yamlParser = new Parser();
 
 $projectData = $yamlParser->parseFile($projectYaml);
 
+$projectData['_spryker_project_path'] = getenv('SPRYKER_PROJECT_PATH');
 $projectData['_knownHosts'] = buildKnownHosts($deploymentDir);
 $projectData['_defaultDeploymentDir'] = $defaultDeploymentDir;
 $projectData['tag'] = $projectData['tag'] ?? uniqid();
@@ -100,6 +104,7 @@ $projectData = buildDefaultCredentials($projectData);
 
 // TODO Make it optional in next major
 // Making webdriver as required service for BC reasons
+//var_dump($projectData['services']);die();
 if (empty($projectData['services']['webdriver'])) {
     $projectData['services']['webdriver'] = [
         'engine' => 'phantomjs',
@@ -489,8 +494,16 @@ file_put_contents(
 unlink($deploymentDir . DS . 'images' . DS . 'common' . DS . 'application' . DS . 'Dockerfile.twig');
 
 file_put_contents(
-    $deploymentDir . DS . 'docker-compose.yml',
-    $twig->render('docker-compose.yml.twig', $projectData)
+    $deploymentDir . DS . 'application-compose.yml',
+    $twig->render('docker-compose/application-compose.yml.twig', $projectData)
+);
+file_put_contents(
+    $deploymentDir . DS . 'gateway-compose.yml',
+    $twig->render('docker-compose/gateway-compose.yml.twig', $projectData)
+);
+file_put_contents(
+    $deploymentDir . DS . 'services-compose.yml',
+    $twig->render('docker-compose/services-compose.yml.twig', $projectData)
 );
 
 $envVarEncoder->setIsActive(true);
@@ -514,6 +527,8 @@ switch ($mountMode) {
         );
         break;
 }
+
+(new CacheBuilder)->build($projectData);
 
 verbose('Generating SSL certificates...');
 

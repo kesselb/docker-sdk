@@ -7,7 +7,11 @@ require docker docker-compose tr awk wc sed grep
 Registry::Flow::addBoot "Compose::verboseMode"
 
 function Compose::getComposeFiles() {
-    local composeFiles="-f ${DEPLOYMENT_PATH}/docker-compose.yml"
+#    local composeFiles="-f ${DEPLOYMENT_PATH}/docker-compose.yml"
+
+    local composeFiles="-f ${DEPLOYMENT_PATH}/application-compose.yml"
+    local composeFiles+=" -f ${DEPLOYMENT_PATH}/services-compose.yml"
+    local composeFiles+=" -f ${DEPLOYMENT_PATH}/gateway-compose.yml"
 
     for composeFile in ${DOCKER_COMPOSE_FILES_EXTRA}; do
         composeFiles+=" -f ${composeFile}"

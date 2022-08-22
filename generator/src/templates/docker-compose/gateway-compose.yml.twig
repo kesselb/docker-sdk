@@ -1,0 +1,44 @@
+version: "3.7"
+
+services:
+    gateway:
+        container_name: spryker_gateway
+        image: ${SPRYKER_DOCKER_PREFIX}_gateway:${SPRYKER_DOCKER_TAG}
+        ports:
+{% for port in _ports %}
+            - "{{ port }}:{{ port }}"
+{% endfor %}
+        depends_on:
+            - frontend
+{% for serviceName, serviceData in services %}
+            - {{ serviceName }}
+{% endfor %}
+        networks:
+            private:
+                aliases:
+{% for host in _hosts %}
+{% if host != 'localhost' %}
+                    - {{ host }}
+{% endif %}
+{% endfor %}
+            public:
+                aliases:
+{% for host in _hosts %}
+{% if host != 'localhost' %}
+                    - {{ host }}
+{% endif %}
+{% endfor %}
+        environment:
+            SPRYKER_TESTING_ENABLE: ${SPRYKER_TESTING_ENABLE}
+            SPRYKER_XDEBUG_MODE_ENABLE: ${SPRYKER_XDEBUG_MODE_ENABLE}
+{% if docker['debug']['xdebug']['enabled'] is not defined or docker['debug']['xdebug']['enabled'] == true %}
+            SPRYKER_XDEBUG_ENABLE: ${SPRYKER_XDEBUG_ENABLE}
+{% endif %}
+        labels:
+            'spryker.app.name': gateway
+            'spryker.app.type': proxy
+            'spryker.project': ${SPRYKER_DOCKER_PREFIX}:${SPRYKER_DOCKER_TAG}
+
+networks:
+    public:
+    private:

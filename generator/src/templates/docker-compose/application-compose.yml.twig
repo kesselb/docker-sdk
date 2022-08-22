@@ -54,7 +54,7 @@ services:
   frontend:
     image: ${SPRYKER_DOCKER_PREFIX}_run_frontend:${SPRYKER_DOCKER_TAG}
     networks:
-        - private
+      - private
     labels:
       'spryker.app.name': frontend
       'spryker.app.type': proxy
@@ -90,43 +90,6 @@ services:
 {% endif %}
 {% endif %}
 
-  gateway:
-    image: ${SPRYKER_DOCKER_PREFIX}_gateway:${SPRYKER_DOCKER_TAG}
-    ports:
-{% for port in _ports %}
-      - "{{ port }}:{{ port }}"
-{% endfor %}
-    depends_on:
-      - frontend
-{% for serviceName, serviceData in services %}
-      - {{ serviceName }}
-{% endfor %}
-    networks:
-      private:
-        aliases:
-{% for host in _hosts %}
-{% if host != 'localhost' %}
-          - {{ host }}
-{% endif %}
-{% endfor %}
-      public:
-        aliases:
-{% for host in _hosts %}
-{% if host != 'localhost' %}
-          - {{ host }}
-{% endif %}
-{% endfor %}
-    environment:
-      SPRYKER_TESTING_ENABLE: ${SPRYKER_TESTING_ENABLE}
-      SPRYKER_XDEBUG_MODE_ENABLE: ${SPRYKER_XDEBUG_MODE_ENABLE}
-{% if docker['debug']['xdebug']['enabled'] is not defined or docker['debug']['xdebug']['enabled'] == true %}
-      SPRYKER_XDEBUG_ENABLE: ${SPRYKER_XDEBUG_ENABLE}
-{% endif %}
-    labels:
-      'spryker.app.name': gateway
-      'spryker.app.type': proxy
-      'spryker.project': ${SPRYKER_DOCKER_PREFIX}:${SPRYKER_DOCKER_TAG}
-
 {% for group in groups %}
 {% for applicationName, applicationData in group['applications'] %}
 {% if applicationData['application'] != 'static' %}
@@ -140,22 +103,12 @@ services:
 {% endif %}
 {% endfor %}
 {% endfor %}
-{% for serviceName, serviceData in services %}
-{% set engine = serviceData['engine'] | lower %}
-{% set version = serviceData['version'] | default('default') %}
-{% include "service/" ~ engine ~ "/" ~ version ~ "/" ~  engine ~ ".yml.twig" with { project: _context, serviceName: serviceName, serviceData: serviceData, engine: engine, version: version } only %}
-{% endfor %}
 
 {% include "mount/" ~ _mountMode ~ ".yml.twig" ignore missing with _context %}
 
 volumes:
-{% for service, serviceData in services %}
-  {{ service }}-{{ serviceData['engine'] }}-data:
-    external: false
-{% endfor %}
-
   ssh-relay:
-      external: false
+    external: false
   logs:
     external: false
   cli_history:

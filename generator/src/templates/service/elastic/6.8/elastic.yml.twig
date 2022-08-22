@@ -1,5 +1,6 @@
   {{ serviceName }}:
     image: spryker/elasticsearch:6.8.4-eol
+    container_name: spryker_{{ serviceName }}
     networks:
         - private
     labels:

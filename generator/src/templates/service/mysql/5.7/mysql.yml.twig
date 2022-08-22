@@ -1,5 +1,6 @@
   {{ serviceName }}:
     image: mysql:5.7
+    container_name: spryker_{{ serviceName }}
     networks:
       - private
     labels:

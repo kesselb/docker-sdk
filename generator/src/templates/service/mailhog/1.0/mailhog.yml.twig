@@ -1,5 +1,6 @@
   {{ serviceName }}:
     image: spryker/mailhog:v1.0.0
+    container_name: spryker_{{ serviceName }}
     networks:
       - private
     labels:
