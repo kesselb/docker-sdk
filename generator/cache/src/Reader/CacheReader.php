@@ -7,13 +7,16 @@
 namespace Cache\Reader;
 
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 class CacheReader
 {
-    public function getCache(): string
+    public function getCache(): array
     {
-
-//        var_dump((new Filesystem())->readlink('/data/deployment/.docker-sdk'));die();
-//        var_dump(scandir('/data/deployment/.docker-sdk'));die();
+        if (file_exists('/data/deployment/.docker-sdk/shared-services.json')) {
+            $data = file_get_contents('/data/deployment/.docker-sdk/shared-services.json');
+//            var_dump(json_decode($data, true));die();
+            return json_decode($data, true);
+        }
     }
 }

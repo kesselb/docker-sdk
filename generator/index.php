@@ -15,7 +15,6 @@ define('DS', DIRECTORY_SEPARATOR);
 define('APPLICATION_SOURCE_DIR', __DIR__ . DS . 'src');
 include_once __DIR__ . DS . 'vendor' . DS . 'autoload.php';
 
-//(new CacheReader)->getCache();
 $deploymentDir = '/data/deployment';
 $projectYaml = buildProjectYaml($deploymentDir . '/project.yml');
 
@@ -76,6 +75,20 @@ $yamlParser = new Parser();
 
 $projectData = $yamlParser->parseFile($projectYaml);
 
+$sharedServices = (new CacheReader)->getCache();
+$namespace = $projectData['namespace'];
+$services = $projectData['services'];
+
+foreach ($sharedServices as $serviceName => $projectNamespace) {
+    if ($projectNamespace == $namespace) {
+        continue;
+    }
+
+    unset($services[$serviceName]);
+}
+
+$projectData['services'] = $services;
+
 $projectData['_spryker_project_path'] = getenv('SPRYKER_PROJECT_PATH');
 $projectData['_knownHosts'] = buildKnownHosts($deploymentDir);
 $projectData['_defaultDeploymentDir'] = $defaultDeploymentDir;
@@ -104,7 +117,6 @@ $projectData = buildDefaultCredentials($projectData);
 
 // TODO Make it optional in next major
 // Making webdriver as required service for BC reasons
-//var_dump($projectData['services']);die();
 if (empty($projectData['services']['webdriver'])) {
     $projectData['services']['webdriver'] = [
         'engine' => 'phantomjs',
