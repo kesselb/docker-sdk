@@ -513,10 +513,22 @@ file_put_contents(
     $deploymentDir . DS . 'gateway-compose.yml',
     $twig->render('docker-compose/gateway-compose.yml.twig', $projectData)
 );
-file_put_contents(
-    $deploymentDir . DS . 'services-compose.yml',
-    $twig->render('docker-compose/services-compose.yml.twig', $projectData)
-);
+
+$servicesCount = count($projectData['services']);
+$sharedServicesCount = 0;
+
+foreach ($projectData['services'] as $serviceConfig) {
+    if ($serviceConfig['shared']) {
+        $sharedServicesCount += 1;
+    }
+}
+
+if ($servicesCount !== $sharedServicesCount) {
+    file_put_contents(
+        $deploymentDir . DS . 'services-compose.yml',
+        $twig->render('docker-compose/services-compose.yml.twig', $projectData)
+    );
+}
 
 $envVarEncoder->setIsActive(true);
 file_put_contents(

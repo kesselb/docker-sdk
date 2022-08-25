@@ -18,10 +18,6 @@ volumes:
       external: false
 {% endif %}
 {% endfor %}
-{% if  _mountMode != 'baked' and _mountMode != 'native' %}
-  {{ namespace }}_{{ tag }}_data_sync:
-      external: true
-{% endif %}
   ssh-relay:
       external: false
   logs:
