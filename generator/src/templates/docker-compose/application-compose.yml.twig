@@ -52,6 +52,7 @@ services:
       - "/home/spryker/bin/cli-rpc.js"
 
   frontend:
+    container_name: ${SPRYKER_DOCKER_PREFIX}_frontend
     image: ${SPRYKER_DOCKER_PREFIX}_run_frontend:${SPRYKER_DOCKER_TAG}
     networks:
       - private
