@@ -75,20 +75,6 @@ $yamlParser = new Parser();
 
 $projectData = $yamlParser->parseFile($projectYaml);
 
-$sharedServices = (new CacheReader)->getCache();
-$namespace = $projectData['namespace'];
-$services = $projectData['services'];
-
-foreach ($sharedServices as $serviceName => $projectNamespace) {
-    if (!array_key_exists($serviceName, $services)) {
-        continue;
-    }
-
-    $services[$serviceName]['shared'] = $projectNamespace !== $namespace;
-}
-
-$projectData['services'] = $services;
-
 $projectData['_spryker_project_path'] = getenv('SPRYKER_PROJECT_PATH');
 $projectData['_knownHosts'] = buildKnownHosts($deploymentDir);
 $projectData['_defaultDeploymentDir'] = $defaultDeploymentDir;
@@ -122,6 +108,20 @@ if (empty($projectData['services']['webdriver'])) {
         'engine' => 'phantomjs',
     ];
 }
+
+$sharedServices = (new CacheReader)->getCache();
+$namespace = $projectData['namespace'];
+$services = $projectData['services'];
+
+foreach ($sharedServices as $serviceName => $projectNamespace) {
+    if (!array_key_exists($serviceName, $services)) {
+        continue;
+    }
+
+    $services[$serviceName]['shared'] = $projectNamespace !== $namespace;
+}
+
+$projectData['services'] = $services;
 
 $projectData['_dashboardEndpoint'] = '';
 if (!empty($projectData['services']['dashboard'])) {
