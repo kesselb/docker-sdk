@@ -10,35 +10,47 @@ class CacheBuilder
 {
     public function build(array $projectData): void
     {
-        $deploymentDir = '/data/deployment';
+        $deploymentDir = '/data/deployment' . DS . '.docker-sdk';
         $namespace = $projectData['namespace'];
         $projectPath = $projectData['_spryker_project_path'];
 
-        $sharedServiceData = array_fill_keys(array_keys($projectData['services']), $namespace);
         $projectCacheData = [
             'namespace' => $namespace,
             'path' => $projectPath,
             'enabled' => true,
         ];
+        $sharedServiceData = $this->getSharedServiceData($projectData);
 
         file_put_contents(
-            $deploymentDir . DS . '.docker-sdk' . DS . $namespace . '.json',
+            $deploymentDir  . DS . $namespace . '.json',
             json_encode($projectCacheData, JSON_PRETTY_PRINT)
         );
+
         file_put_contents(
-            $deploymentDir . DS . '.docker-sdk' . DS . 'shared-services.json',
+            $deploymentDir . DS . 'shared-services.json',
             json_encode($sharedServiceData, JSON_PRETTY_PRINT)
         );
-//        $cacheData = [];
+    }
 
-//
-//        var_dump(md5($namespace . $projectPath)); die();
-//
-//        $endpointMap = $projectData['endpointMap'];
-//        $endpointDebugMap = $projectData['_endpointDebugMap'];
-//        $applications = $projectData['_applications'];
-//        $storageData = $projectData['storageData']['hosts'];
-//        $services = $projectData['services'];
-//        var_dump($sharedServiceData, $projectCacheData);die();
+    private function getSharedServiceData(array $projectData): array
+    {
+        $deploymentDir = '/data/deployment' . DS . '.docker-sdk';
+        $namespace = $projectData['namespace'];
+        $sharedServiceData = array_fill_keys(array_keys($projectData['services']), $namespace);
+
+        if (!file_exists($deploymentDir . DS . 'shared-services.json')) {
+            return $sharedServiceData;
+        }
+
+        $sharedServiceDataFromFile = file_get_contents($deploymentDir . DS . 'shared-services.json');
+        $sharedServiceDataFromFile = json_decode($sharedServiceDataFromFile, true);
+
+        foreach ($sharedServiceData as $serviceName => $projectNamespace) {
+            if (array_key_exists($serviceName, $sharedServiceDataFromFile)) {
+                $sharedServiceData[$serviceName] = $sharedServiceDataFromFile[$serviceName];
+            }
+        }
+
+        return $sharedServiceData;
     }
 }
