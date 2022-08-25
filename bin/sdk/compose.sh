@@ -10,8 +10,13 @@ function Compose::getComposeFiles() {
 #    local composeFiles="-f ${DEPLOYMENT_PATH}/docker-compose.yml"
 
     local composeFiles="-f ${DEPLOYMENT_PATH}/application-compose.yml"
-    local composeFiles+=" -f ${DEPLOYMENT_PATH}/services-compose.yml"
-    local composeFiles+=" -f ${DEPLOYMENT_PATH}/gateway-compose.yml"
+
+    if [ -f "${DEPLOYMENT_PATH}/services-compose.yml" ]; then
+      composeFiles+=" -f ${DEPLOYMENT_PATH}/services-compose.yml"
+    fi
+    if [ -f "${DEPLOYMENT_PATH}/gateway-compose.yml" ]; then
+      composeFiles+=" -f ${DEPLOYMENT_PATH}/gateway-compose.yml"
+    fi
 
     for composeFile in ${DOCKER_COMPOSE_FILES_EXTRA}; do
         composeFiles+=" -f ${composeFile}"
