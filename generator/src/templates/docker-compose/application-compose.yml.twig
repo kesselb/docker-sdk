@@ -51,13 +51,13 @@ services:
       - "node"
       - "/home/spryker/bin/cli-rpc.js"
 
-  frontend:
-    container_name: ${SPRYKER_DOCKER_PREFIX}_frontend
+  {{ namespace }}_frontend:
+    container_name: {{ namespace }}_frontend
     image: ${SPRYKER_DOCKER_PREFIX}_run_frontend:${SPRYKER_DOCKER_TAG}
     networks:
       - private
     labels:
-      'spryker.app.name': frontend
+      'spryker.app.name': {{ namespace }}_frontend
       'spryker.app.type': proxy
       'spryker.project': ${SPRYKER_DOCKER_PREFIX}:${SPRYKER_DOCKER_TAG}
     depends_on:

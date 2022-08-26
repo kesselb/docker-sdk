@@ -110,6 +110,7 @@ if (empty($projectData['services']['webdriver'])) {
 }
 
 $sharedServices = (new CacheReader)->getCache();
+$gatewayData = (new CacheReader)->getGatewayData();
 $namespace = $projectData['namespace'];
 $services = $projectData['services'];
 

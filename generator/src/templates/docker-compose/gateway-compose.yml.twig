@@ -9,7 +9,7 @@ services:
             - "{{ port }}:{{ port }}"
 {% endfor %}
         depends_on:
-            - frontend
+            - {{ namespace }}_frontend
 {% for serviceName, serviceData in services %}
             - {{ serviceName }}
 {% endfor %}

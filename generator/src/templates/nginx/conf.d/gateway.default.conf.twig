@@ -58,11 +58,11 @@ server {
 {% set port = (endpoint | split(':'))[1] | default(80) %}
 {% set host = endpoint | split(':') | first %}
 upstream {{ upstream }} {
-    server frontend:{{ port }};
+    server {{ namespace }}_frontend:{{ port }};
 }
 {% if applicationData['application'] != 'static' %}
 upstream {{ upstream }}_xdebug {
-    server frontend:{{ debugPort }};
+    server {{ namespace }}_frontend:{{ debugPort }};
 }
 {% endif %}
 {% include "nginx/http/gateway/#{applicationData['application']}.server.conf.twig" with {

@@ -150,7 +150,7 @@ function Compose::up() {
     Assets::build ${noCache} ${doAssets}
     Images::buildFrontend ${noCache} ${doBuild}
     Compose::run --build
-    Compose::command restart frontend gateway
+    Compose::command restart ${SPRYKER_DOCKER_PREFIX}_frontend gateway
 
     Registry::Flow::runAfterUp
 

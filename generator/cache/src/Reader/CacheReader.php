@@ -6,8 +6,6 @@
  */
 namespace Cache\Reader;
 
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 
 class CacheReader
 {
@@ -15,8 +13,19 @@ class CacheReader
     {
         if (file_exists('/data/deployment/.docker-sdk/shared-services.json')) {
             $data = file_get_contents('/data/deployment/.docker-sdk/shared-services.json');
-//            var_dump(json_decode($data, true));die();
             return json_decode($data, true);
         }
+
+        return [];
+    }
+
+    public function getGatewayData(): array
+    {
+        if (file_exists('/data/deployment/.docker-sdk/gateway-data.json')) {
+            $data = file_get_contents('/data/deployment/.docker-sdk/gateway-data.json');
+            return json_decode($data, true);
+        }
+
+        return [];
     }
 }
